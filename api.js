@@ -12,6 +12,7 @@ const send = micro.send;
 
 //Fetch docs
 let _DOC_FILES_ = {};
+let _DOC_FILES_LIST = [];
 async function getFiles(cwd) {
   console.log("Building files...");
   cwd = cwd || process.cwd();
@@ -36,6 +37,7 @@ async function getFiles(cwd) {
 async function getDocFile(path, cwd) {
   cwd = cwd || process.cwd();
   let file = await readFile(resolve(cwd, path), "utf-8");
+  _DOC_FILES_LIST.push(path.slice(path.lastIndexOf("/") + 1))
   file = fm(file);
   _DOC_FILES_[path] = {
     attrs: file.attributes,
@@ -78,6 +80,9 @@ const server = micro(async function(req, res) {
   // Releases
   if (req.url === '/releases') {
     return send(res, 200, RELEASES)
+  }
+  if (req.url === '/arts') {
+    return send(res, 200, {'data':_DOC_FILES_LIST, 'code':1})
   }
   let path = req.url.slice(1) + '.md'
   if (!_DOC_FILES_[path]) {
