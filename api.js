@@ -11,6 +11,7 @@ const readFile = pify(fs.readFile);
 const send = micro.send;
 
 //Fetch docs
+let _FILE_NUM = 0;
 let _DOC_FILES_ = {};
 let _DOC_FILES_LIST = [];
 async function getFiles(cwd) {
@@ -37,7 +38,7 @@ async function getFiles(cwd) {
 async function getDocFile(path, cwd) {
   cwd = cwd || process.cwd();
   let file = await readFile(resolve(cwd, path), "utf-8");
-  _DOC_FILES_LIST.push(path.slice(path.lastIndexOf("/") + 1))
+  _DOC_FILES_LIST.push({"article_name":path.slice(path.lastIndexOf("/") + 1), "_id": _FILE_NUM++})
   file = fm(file);
   _DOC_FILES_[path] = {
     attrs: file.attributes,
